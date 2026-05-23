@@ -2,7 +2,7 @@ const express = require("express");
 const cors = require("cors");
 const path = require("path");
 
-// const routesV1 = require("./routes");
+const routes = require("./routes");
 
 const app = express();
 
@@ -18,11 +18,11 @@ app.use(express.urlencoded({ extended: true, limit: "50mb" }));
 
 app.use(express.static(path.join(__dirname, "../public")));
 
-// app.use("/api/", routesV1);
+app.use("/api/", routes);
 
 app.get("/", (req, res) => {
 	res.status(200).json({
-		message: "Dynamic QR Backend Running",
+		message: "Welcome to QR Pay Generator",
 	});
 });
 
