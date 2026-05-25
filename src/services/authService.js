@@ -1,40 +1,40 @@
-const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
 
 const UserMaster = require("../models/UserMaster");
 const logger = require("nirmitee-logger");
-const { response } = require("../app");
-const { is_active } = require("../utils/commonFields");
 
-exports.registerUser = async (payload, options) => {
+exports.registerUser = async (
+    payload,
+    options
+) => {
     const { name, mobile_no, pin } = payload;
+
     const { transaction } = options;
 
-    const existingUser = await UserMaster.findOne({
-        where: {
-            mobile_no,
-            is_active: true,
-        },
-    });
+    const existingUser =
+        await UserMaster.findOne({
+            where: {
+                mobile_no,
+                is_active: true,
+            },
+        });
 
     if (existingUser) {
-        logger.warn("User already exists", { mobile_no });
-        return res.status(400).json({
-            success: false,
-            message: "User already exists",
-        });
+        throw new Error("User already exists");
     }
 
-    const user = await UserMaster.create({
-        name,
-        mobile_no,
-        pin,
-        is_active: true,
-    },
-        { transaction });
+    const user = await UserMaster.create(
+        {
+            name,
+            mobile_no,
+            pin,
+            is_active: true,
+        },
+        {
+            transaction,
+        }
+    );
 
-    await transaction.commit();
-    logger.info("User created successfully", { user_id: user?.id, mobile_no: user?.mobile_no });
     return user;
 };
 
@@ -49,23 +49,21 @@ exports.loginUser = async (payload) => {
     });
 
     if (!user) {
+        logger.error("User not found", { mobile_no });
         throw new Error("User not found");
     }
 
-    const isValidPin = await bcrypt.compare(
-        pin,
-        user.pin
-    );
+    let userPin = parseInt(user?.pin);
 
-    if (!isValidPin) {
+    if (userPin !== parseInt(pin)) {
+        logger.error("Invalid PIN", { mobile_no });
         throw new Error("Invalid PIN");
     }
 
     const token = jwt.sign(
         {
-            user_id: user.user_id,
-            mobile_no: user.mobile_no,
-            role: user.role,
+            user_id: user?.id,
+            mobile_no: user?.mobile_no
         },
         process.env.JWT_SECRET,
         {
