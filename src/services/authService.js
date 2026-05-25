@@ -2,9 +2,13 @@ const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
 
 const UserMaster = require("../models/UserMaster");
+const logger = require("nirmitee-logger");
+const { response } = require("../app");
+const { is_active } = require("../utils/commonFields");
 
-exports.registerUser = async (payload) => {
+exports.registerUser = async (payload, options) => {
     const { name, mobile_no, pin } = payload;
+    const { transaction } = options;
 
     const existingUser = await UserMaster.findOne({
         where: {
@@ -14,17 +18,23 @@ exports.registerUser = async (payload) => {
     });
 
     if (existingUser) {
-        throw new Error("User already exists");
+        logger.warn("User already exists", { mobile_no });
+        return res.status(400).json({
+            success: false,
+            message: "User already exists",
+        });
     }
-
-    // const hashedPin = await bcrypt.hash(pin, 10);
 
     const user = await UserMaster.create({
         name,
         mobile_no,
-        pin
-        });
+        pin,
+        is_active: true,
+    },
+        { transaction });
 
+    await transaction.commit();
+    logger.info("User created successfully", { user_id: user?.id, mobile_no: user?.mobile_no });
     return user;
 };
 

@@ -1,10 +1,28 @@
+const sequelize = require("../config/database");
 const authService = require("../services/authService");
+const logger = require("nirmitee-logger");
 
 exports.register = async (req, res) => {
+    let transaction = await sequelize.transaction({ autocommit: false });
     try {
         const user = await authService.registerUser(
-            req.body
+            req.body,
+            { transaction }
         );
+
+        if (!user) {
+            await transaction.rollback();
+            logger.error("User registration failed", { mobile_no: req.body.mobile_no });
+            return res.status(500).json({
+                success: false,
+                message: "User registration failed",
+            });
+        }
+
+        logger.info("User registered successfully", {
+            id: user.id,
+            mobile_no: user.mobile_no,
+        });
 
         return res.status(201).json({
             success: true,
@@ -12,10 +30,14 @@ exports.register = async (req, res) => {
             data: user,
         });
     } catch (error) {
+        await transaction.rollback();
         return res.status(500).json({
             success: false,
             message: error.message,
         });
+    }
+    finally {
+        await transaction.cleanup();
     }
 };
 

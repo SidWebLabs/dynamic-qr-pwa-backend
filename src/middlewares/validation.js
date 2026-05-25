@@ -7,7 +7,7 @@ module.exports = (schema) => {
         } catch (error) {
             return res.status(400).json({
                 success: false,
-                message: error.details[0].message,
+                message: error
             });
         }
     };
