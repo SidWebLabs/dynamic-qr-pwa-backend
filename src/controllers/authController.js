@@ -24,6 +24,8 @@ exports.register = async (req, res) => {
             mobile_no: user.mobile_no,
         });
 
+        await transaction.commit();
+
         return res.status(201).json({
             success: true,
             message: "User registered successfully",
@@ -42,20 +44,25 @@ exports.register = async (req, res) => {
 };
 
 exports.login = async (req, res) => {
+    let transaction = await sequelize.transaction({ autocommit: false });
     try {
         const data = await authService.loginUser(
             req.body
         );
 
+        await transaction.commit();
         return res.status(200).json({
             success: true,
             message: "Login successful",
             data,
         });
     } catch (error) {
+        await transaction.rollback();
         return res.status(500).json({
             success: false,
             message: error.message,
         });
+    } finally {
+        await transaction.cleanup();
     }
 };
