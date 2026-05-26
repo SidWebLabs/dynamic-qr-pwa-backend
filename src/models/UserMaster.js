@@ -27,6 +27,11 @@ const UserMaster = sequelize.define(
             allowNull: false,
         },
 
+        max_account_limit: {
+            type: DataTypes.INTEGER,
+            defaultValue: 3,
+        },
+        
         ...commonFields,
     },
     {

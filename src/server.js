@@ -11,6 +11,7 @@ const sequelize = require("./config/database");
 
 require("./models/UserMaster");
 require("./models/RoleMaster");
+require("./models/UserAccountMaster");
 
 const PORT = process.env.PORT || 5000;
 
