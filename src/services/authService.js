@@ -2,6 +2,8 @@ const jwt = require("jsonwebtoken");
 
 const UserMaster = require("../models/UserMaster");
 const logger = require("nirmitee-logger");
+const { created_by } = require("../utils/commonFields");
+const { ROLES } = require("../utils/rolesMaster");
 
 exports.registerUser = async (
     payload,
@@ -20,6 +22,7 @@ exports.registerUser = async (
         });
 
     if (existingUser) {
+        logger.error({message: "User already exists", mobile_no});
         throw new Error("User already exists");
     }
 
@@ -29,6 +32,7 @@ exports.registerUser = async (
             mobile_no,
             pin,
             is_active: true,
+            created_by: ROLES?.ADMIN?.id,
         },
         {
             transaction,
@@ -49,14 +53,14 @@ exports.loginUser = async (payload) => {
     });
 
     if (!user) {
-        logger.error("User not found", { mobile_no });
+        logger.error({message: "User not found", mobile_no});
         throw new Error("User not found");
     }
 
     let userPin = parseInt(user?.pin);
 
     if (userPin !== parseInt(pin)) {
-        logger.error("Invalid PIN", { mobile_no });
+        logger.error({message: "Invalid PIN", mobile_no});
         throw new Error("Invalid PIN");
     }
 

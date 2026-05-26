@@ -1,11 +1,16 @@
 require("dotenv").config();
 
+const logger = require("nirmitee-logger");
+
+logger.setContext("QR-PAY-BACKEND");
+
 const http = require("http");
 
 const app = require("./app");
 const sequelize = require("./config/database");
 
 require("./models/UserMaster");
+require("./models/RoleMaster");
 
 const PORT = process.env.PORT || 5000;
 

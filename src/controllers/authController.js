@@ -12,17 +12,14 @@ exports.register = async (req, res) => {
 
         if (!user) {
             await transaction.rollback();
-            logger.error("User registration failed", { mobile_no: req.body.mobile_no });
+            logger.error({message: "User registration failed", mobile_no: req.body.mobile_no});
             return res.status(500).json({
                 success: false,
                 message: "User registration failed",
             });
         }
 
-        logger.info("User registered successfully", {
-            id: user.id,
-            mobile_no: user.mobile_no,
-        });
+        logger.info({message: "User registered successfully", user_name: user?.name, mobile_no: user?.mobile_no});
 
         await transaction.commit();
 
@@ -50,6 +47,9 @@ exports.login = async (req, res) => {
             req.body
         );
 
+        console.log("Login data:", data);
+
+        logger.info({message: "User logged in successfully", mobile_no: data?.user?.mobile_no});
         await transaction.commit();
         return res.status(200).json({
             success: true,
