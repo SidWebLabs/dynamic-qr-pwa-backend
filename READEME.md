@@ -340,3 +340,7 @@ NODE_ENV=production
 
 # Author
 Siddhesh Kulkarni
+
+Requirements
+Just need to add history and need to create table f9r that.
+Check working of the flow and offline working also
