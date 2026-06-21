@@ -93,6 +93,38 @@ const joiValidation = {
         .messages({
             "object.min": "Provide at least one field to update",
         }),
+
+
+    createHistory: joi.object({
+        account_id: joi
+            .number()
+            .integer()
+            .positive()
+            .required()
+            .messages({
+                "number.base": "Account ID is required",
+                "any.required": "Account ID is required",
+            }),
+
+        amount: joi
+            .number()
+            .positive()
+            .precision(2)
+            .required()
+            .messages({
+                "number.base": "Amount must be a valid number",
+                "number.positive": "Amount must be greater than 0",
+                "any.required": "Amount is required",
+            }),
+
+        note: joi
+            .string()
+            .max(255)
+            .allow("", null)
+            .messages({
+                "string.max": "Note must be at most 255 characters",
+            }),
+    }),
 };
 
 module.exports = joiValidation;

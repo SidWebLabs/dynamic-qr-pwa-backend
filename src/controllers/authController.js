@@ -43,6 +43,7 @@ exports.register = async (req, res) => {
 exports.login = async (req, res) => {
     let transaction = await sequelize.transaction({ autocommit: false });
     try {
+        console.log("Login request body:", req.body);
         const data = await authService.loginUser(
             req.body
         );
