@@ -22,7 +22,7 @@ sequelize
 	.then(async () => {
 		console.log("Database Connected");
 
-		await sequelize.sync({ alter: true });
+		await sequelize.sync({ alter: false });
 
 		console.log("Tables Synced");
 

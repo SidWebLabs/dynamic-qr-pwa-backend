@@ -1,9 +1,7 @@
 const { DataTypes } = require("sequelize");
 
 const sequelize = require("../config/database");
-
 const commonFields = require("../utils/commonFields");
-
 const UserMaster = require("./UserMaster");
 
 const UserAccountMaster = sequelize.define(
@@ -18,12 +16,10 @@ const UserAccountMaster = sequelize.define(
 		user_id: {
 			type: DataTypes.BIGINT,
 			allowNull: false,
-
 			references: {
 				model: UserMaster,
 				key: "id",
 			},
-
 			onUpdate: "CASCADE",
 			onDelete: "CASCADE",
 		},
@@ -36,7 +32,7 @@ const UserAccountMaster = sequelize.define(
 		owner_upi_id: {
 			type: DataTypes.STRING(255),
 			allowNull: false,
-			unique: true,
+			unique: false,
 		},
 
 		is_primary: {
@@ -52,15 +48,7 @@ const UserAccountMaster = sequelize.define(
 	}
 );
 
-// Associations
-UserAccountMaster.belongsTo(UserMaster, {
-	foreignKey: "user_id",
-	as: "user",
-});
-
-UserMaster.hasMany(UserAccountMaster, {
-	foreignKey: "user_id",
-	as: "accounts",
-});
+UserAccountMaster.belongsTo(UserMaster, { foreignKey: "user_id", as: "user" });
+UserMaster.hasMany(UserAccountMaster, { foreignKey: "user_id", as: "accounts" });
 
 module.exports = UserAccountMaster;
