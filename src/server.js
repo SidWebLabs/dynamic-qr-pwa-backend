@@ -12,6 +12,9 @@ const sequelize = require("./config/database");
 require("./models/UserMaster");
 require("./models/RoleMaster");
 require("./models/UserAccountMaster");
+require("./models/UserQrHistoryMaster");
+require("./models/UserSplitPaymentMaster");
+require("./models/UserSplitPaymentItemMaster");
 
 const PORT = process.env.PORT || 5000;
 

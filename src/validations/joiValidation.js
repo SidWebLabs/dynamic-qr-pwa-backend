@@ -111,9 +111,55 @@ const joiValidation = {
             .positive()
             .precision(2)
             .required()
+            .custom((value, helpers) => {
+                if (
+                    value > CONSTANTS.SPLIT_MIN_EXCLUSIVE &&
+                    value < CONSTANTS.SPLIT_MAX_EXCLUSIVE
+                ) {
+                    return helpers.message(
+                        `Amount between ₹${CONSTANTS.SPLIT_MIN_EXCLUSIVE} and ₹${CONSTANTS.SPLIT_MAX_EXCLUSIVE} must use split payment`
+                    );
+                }
+                return value;
+            })
             .messages({
                 "number.base": "Amount must be a valid number",
                 "number.positive": "Amount must be greater than 0",
+                "any.required": "Amount is required",
+            }),
+
+        note: joi
+            .string()
+            .max(255)
+            .allow("", null)
+            .messages({
+                "string.max": "Note must be at most 255 characters",
+            }),
+    }),
+
+    createSplitPayment: joi.object({
+        account_id: joi
+            .number()
+            .integer()
+            .positive()
+            .required()
+            .messages({
+                "number.base": "Account ID is required",
+                "any.required": "Account ID is required",
+            }),
+
+        amount: joi
+            .number()
+            .positive()
+            .precision(2)
+            .greater(CONSTANTS.SPLIT_MIN_EXCLUSIVE)
+            .less(CONSTANTS.SPLIT_MAX_EXCLUSIVE)
+            .required()
+            .messages({
+                "number.base": "Amount must be a valid number",
+                "number.positive": "Amount must be greater than 0",
+                "number.greater": `Split amount must be greater than ₹${CONSTANTS.SPLIT_MIN_EXCLUSIVE}`,
+                "number.less": `Split amount must be less than ₹${CONSTANTS.SPLIT_MAX_EXCLUSIVE}`,
                 "any.required": "Amount is required",
             }),
 
