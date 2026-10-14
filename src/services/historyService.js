@@ -2,18 +2,10 @@ const { Op } = require("sequelize");
 const UserQrHistoryMaster = require("../models/UserQrHistoryMaster");
 const UserAccountMaster = require("../models/UserAccountMaster");
 const logger = require("nirmitee-logger");
-const { shouldSplitAmount } = require("../utils/splitAmount");
-const { CONSTANTS } = require("../lib/constant");
 
 exports.createHistory = async (payload, options) => {
     const { user_id, account_id, amount, note } = payload;
     const { transaction } = options;
-
-    if (shouldSplitAmount(amount)) {
-        throw new Error(
-            `Amount between ₹${CONSTANTS.SPLIT_MIN_EXCLUSIVE} and ₹${CONSTANTS.SPLIT_MAX_EXCLUSIVE} must use split payment`
-        );
-    }
 
     const account = await UserAccountMaster.findOne({
         where: { id: account_id, user_id, is_active: true },

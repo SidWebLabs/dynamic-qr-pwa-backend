@@ -111,17 +111,6 @@ const joiValidation = {
             .positive()
             .precision(2)
             .required()
-            .custom((value, helpers) => {
-                if (
-                    value > CONSTANTS.SPLIT_MIN_EXCLUSIVE &&
-                    value < CONSTANTS.SPLIT_MAX_EXCLUSIVE
-                ) {
-                    return helpers.message(
-                        `Amount between ₹${CONSTANTS.SPLIT_MIN_EXCLUSIVE} and ₹${CONSTANTS.SPLIT_MAX_EXCLUSIVE} must use split payment`
-                    );
-                }
-                return value;
-            })
             .messages({
                 "number.base": "Amount must be a valid number",
                 "number.positive": "Amount must be greater than 0",
